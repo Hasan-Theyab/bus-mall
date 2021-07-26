@@ -1,3 +1,5 @@
+/* eslint-disable no-var */
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-inner-declarations */
 'use strict';
 let leftImageElement = document.getElementById('left-image');
@@ -12,7 +14,11 @@ let leftImageIndex;
 let middleImageIndex;
 let rightImageIndex;
 
+let namesArr = [];
 
+let votesArr = [];
+
+let shownArr = [];
 
 function Product(name, src) {
   this.name = name;
@@ -20,6 +26,7 @@ function Product(name, src) {
   this.votes = 0;
   this.shown = 0;
   Product.all.push(this);
+  namesArr.push(this.name);
 }
 
 Product.all = [];
@@ -56,11 +63,14 @@ function renderThreeImages() {
   leftImageIndex = getRandomIndex();
   middleImageIndex = getRandomIndex();
   rightImageIndex = getRandomIndex();
+  let indexesArr = [leftImageIndex, rightImageIndex, middleImageIndex];
 
-  while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex||rightImageIndex===middleImageIndex) {
+  while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex || rightImageIndex === middleImageIndex || indexesArr.includes(leftImageIndex) || indexesArr.includes(middleImageIndex) || indexesArr.includes(rightImageIndex)) {
     leftImageIndex = getRandomIndex();
     rightImageIndex = getRandomIndex();
+    middleImageIndex = getRandomIndex();
   }
+
 
   leftImageElement.src = Product.all[leftImageIndex].source;
   Product.all[leftImageIndex].shown++;
@@ -108,10 +118,87 @@ function handleUserClick(event) {
       }
       finalResultButton.removeEventListener('click', handleButtonClick);
     }
-    // remove event listener:
+    for (let i = 0; i < Product.all.length; i++) {
+      votesArr.push(Product.all[i].votes);
+      shownArr.push(Product.all[i].shown);
+    }
 
     imagesDiv.removeEventListener('click', handleUserClick);
+    showChart();
   }
   userAttemptsCounter++;
 }
 
+function showChart() {
+  const data = {
+    labels: namesArr,
+    datasets: [{
+      label: 'Votes',
+      data: votesArr,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)'
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)'
+      ],
+      borderWidth: 1
+    },
+    {
+      label: 'Shown',
+      data: shownArr,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)'
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)'
+      ],
+      borderWidth: 1
+    }
+
+    ]
+  };
+
+  const config = {
+    type: 'bar',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    },
+  };
+
+
+  // eslint-disable-next-line no-undef
+  var myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+
+}
