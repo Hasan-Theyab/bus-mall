@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 'use strict';
 let leftImageElement = document.getElementById('left-image');
 let middleImageElement = document.getElementById('middle-image');
@@ -14,11 +15,11 @@ let rightImageIndex;
 
 
 function Product(name, src) {
-    this.name = name;
-    this.source = src;
-    this.votes = 0;
-    this.shown = 0;
-    Product.all.push(this);
+  this.name = name;
+  this.source = src;
+  this.votes = 0;
+  this.shown = 0;
+  Product.all.push(this);
 }
 
 Product.all = [];
@@ -45,28 +46,28 @@ new Product('wine-glass', 'img/wine-glass.jpg');//18
 
 // from w3 schools
 function getRandomIndex() {
-    return Math.floor(Math.random() * Product.all.length);
+  return Math.floor(Math.random() * Product.all.length);
 }
 
 
 // render
 
 function renderThreeImages() {
+  leftImageIndex = getRandomIndex();
+  middleImageIndex = getRandomIndex();
+  rightImageIndex = getRandomIndex();
+
+  while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex||rightImageIndex===middleImageIndex) {
     leftImageIndex = getRandomIndex();
-    middleImageIndex = getRandomIndex();
     rightImageIndex = getRandomIndex();
+  }
 
-    while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex) {
-        rightImageIndex = getRandomIndex();
-        middleImageIndex = getRandomIndex();
-    }
-
-    leftImageElement.src = Product.all[leftImageIndex].source;
-    middleImageElement.src = Product.all[middleImageIndex].source;
-    rightImageElement.src = Product.all[rightImageIndex].source;
-    Product.all[leftImageIndex].shown++;
-    Product.all[middleImageIndex].shown++;
-    Product.all[rightImageIndex].shown++;
+  leftImageElement.src = Product.all[leftImageIndex].source;
+  Product.all[leftImageIndex].shown++;
+  middleImageElement.src = Product.all[middleImageIndex].source;
+  Product.all[middleImageIndex].shown++;
+  rightImageElement.src = Product.all[rightImageIndex].source;
+  Product.all[rightImageIndex].shown++;
 }
 
 renderThreeImages();
@@ -74,38 +75,43 @@ renderThreeImages();
 imagesDiv.addEventListener('click', handleUserClick);
 
 function handleUserClick(event) {
-   userAttemptsCounter++;
-    if (userAttemptsCounter <= maxAttempts) {
-        if (event.target.id === 'left-image') {
-            Product.all[leftImageIndex].votes++;
-        } else if (event.target.id === 'middle-image') {
-            Product.all[middleImageIndex].votes++;
-        } else if (event.target.id === 'right-image') {
-            Product.all[rightImageIndex].votes++;
-        } else {
-            alert('Please, click only on an image');
-        }
-        
-        renderThreeImages();
-    } else {
-        let buttonDiv = document.getElementById('button-div');
-        let finalResultButton = document.createElement('button');
-        buttonDiv.appendChild(finalResultButton);
-        finalResultButton.textContent = 'View Results';
-        finalResultButton.addEventListener('click', handleButtonClick);
-        function handleButtonClick(event) {
-            let list = document.getElementById('results-list');
-            for (let i = 0; i < Product.all.length; i++) {
-                let listItem = document.createElement('li');
-                list.appendChild(listItem);
-                listItem.textContent = `${Product.all[i].name} had ${Product.all[i].votes} votes, and was seen ${Product.all[i].shown} times.`
-            }
-            finalResultButton.removeEventListener('click', handleButtonClick);
-        }
-        // remove event listener:
 
-        imagesDiv.removeEventListener('click', handleUserClick);
+  if (userAttemptsCounter < maxAttempts) {
+    if (event.target.id === 'left-image') {
+      Product.all[leftImageIndex].votes++;
+      renderThreeImages();
+    } else if (event.target.id === 'middle-image') {
+      Product.all[middleImageIndex].votes++;
+      renderThreeImages();
+    } else if (event.target.id === 'right-image') {
+      Product.all[rightImageIndex].votes++;
+      renderThreeImages();
+    } else {
+      alert('Please, click only on an image');
+      userAttemptsCounter--;
     }
-    
+
+
+  } else {
+    let buttonDiv = document.getElementById('button-div');
+    let finalResultButton = document.createElement('button');
+    buttonDiv.appendChild(finalResultButton);
+    finalResultButton.textContent = 'View Results';
+    finalResultButton.addEventListener('click', handleButtonClick);
+    // eslint-disable-next-line no-unused-vars
+    function handleButtonClick(event) {
+      let list = document.getElementById('results-list');
+      for (let i = 0; i < Product.all.length; i++) {
+        let listItem = document.createElement('li');
+        list.appendChild(listItem);
+        listItem.textContent = `${Product.all[i].name} had ${Product.all[i].votes} votes, and was seen ${Product.all[i].shown} times.`;
+      }
+      finalResultButton.removeEventListener('click', handleButtonClick);
+    }
+    // remove event listener:
+
+    imagesDiv.removeEventListener('click', handleUserClick);
+  }
+  userAttemptsCounter++;
 }
 
