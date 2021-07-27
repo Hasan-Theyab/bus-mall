@@ -7,7 +7,7 @@ let middleImageElement = document.getElementById('middle-image');
 let rightImageElement = document.getElementById('right-image');
 let imagesDiv = document.getElementById('images-div');
 
-let maxAttempts = 25;
+let maxAttempts = 5;
 let userAttemptsCounter = 0;
 
 let leftImageIndex;
@@ -51,6 +51,26 @@ new Product('unicorn', 'img/unicorn.jpg');//16
 new Product('water-can', 'img/water-can.jpg');//17
 new Product('wine-glass', 'img/wine-glass.jpg');//18
 
+function updateStorage() {
+  let stringArr = JSON.stringify(Product.all);
+  localStorage.setItem('Product', stringArr);
+
+}
+
+function getProductVotes() {
+  let data = localStorage.getItem('Product');
+  let parsedArr = JSON.parse(data);
+  if (parsedArr !== null) {
+    // reinstantiation
+    for (let i = 0; i < parsedArr.length; i++) {
+      // name, src,votes,shown
+      new Product(parsedArr[i].name, parsedArr[i].source,parsedArr[i].vote,parsedArr[i].shown);
+    }
+  }
+  renderThreeImages();
+}
+
+
 // from w3 schools
 function getRandomIndex() {
   return Math.floor(Math.random() * Product.all.length);
@@ -59,7 +79,7 @@ function getRandomIndex() {
 
 // render
 
-let shownPictures=[];
+let shownPictures = [];
 
 function renderThreeImages() {
   leftImageIndex = getRandomIndex();
@@ -73,7 +93,7 @@ function renderThreeImages() {
     middleImageIndex = getRandomIndex();
   }
 
-  shownPictures=[leftImageIndex,middleImageIndex,rightImageIndex];
+  shownPictures = [leftImageIndex, middleImageIndex, rightImageIndex];
 
   leftImageElement.src = Product.all[leftImageIndex].source;
   Product.all[leftImageIndex].shown++;
@@ -124,9 +144,10 @@ function handleUserClick(event) {
     for (let i = 0; i < Product.all.length; i++) {
       votesArr.push(Product.all[i].votes);
       shownArr.push(Product.all[i].shown);
-    }
 
+    }
     imagesDiv.removeEventListener('click', handleUserClick);
+    updateStorage();  
     showChart();
   }
   userAttemptsCounter++;
@@ -205,3 +226,6 @@ function showChart() {
   );
 
 }
+
+getProductVotes();
+
