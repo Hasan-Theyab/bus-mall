@@ -59,18 +59,21 @@ function getRandomIndex() {
 
 // render
 
+let shownPictures=[];
+
 function renderThreeImages() {
   leftImageIndex = getRandomIndex();
   middleImageIndex = getRandomIndex();
   rightImageIndex = getRandomIndex();
-  let indexesArr = [leftImageIndex, rightImageIndex, middleImageIndex];
 
-  while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex || rightImageIndex === middleImageIndex || indexesArr.includes(leftImageIndex) || indexesArr.includes(middleImageIndex) || indexesArr.includes(rightImageIndex)) {
+
+  while (leftImageIndex === rightImageIndex || leftImageIndex === middleImageIndex || rightImageIndex === middleImageIndex || shownPictures.includes(leftImageIndex) || shownPictures.includes(middleImageIndex) || shownPictures.includes(rightImageIndex)) {
     leftImageIndex = getRandomIndex();
     rightImageIndex = getRandomIndex();
     middleImageIndex = getRandomIndex();
   }
 
+  shownPictures=[leftImageIndex,middleImageIndex,rightImageIndex];
 
   leftImageElement.src = Product.all[leftImageIndex].source;
   Product.all[leftImageIndex].shown++;
