@@ -7,7 +7,7 @@ let middleImageElement = document.getElementById('middle-image');
 let rightImageElement = document.getElementById('right-image');
 let imagesDiv = document.getElementById('images-div');
 
-let maxAttempts = 5;
+let maxAttempts = 25;
 let userAttemptsCounter = 0;
 
 let leftImageIndex;
@@ -31,6 +31,41 @@ function Product(name, src) {
 
 Product.all = [];
 
+
+
+
+function updateStorage() {
+  let stringArr = JSON.stringify(Product.all);
+  localStorage.setItem('Product', stringArr);
+
+}
+
+function getItems() {
+  let data = localStorage.getItem('Product');
+  let parsedArr = JSON.parse(data);
+  
+  // Method1
+
+  // if (parsedArr !== null) {
+  //  Product.all=parsedArr;
+  // }
+
+
+  //Method2
+
+  if (parsedArr !== null) {
+    Product.all=[];
+    for (let i = 0; i < parsedArr.length; i++) {
+      let newProduct = new Product(parsedArr[i].name, parsedArr[i].source);
+      newProduct.votes=parsedArr[i].votes;
+      newProduct.shown=parsedArr[i].shown;
+    }
+  }
+  
+}
+
+
+
 new Product('bag', 'img/bag.jpg');//0
 new Product('banana', 'img/banana.jpg');//1
 new Product('bathroom', 'img/bathroom.jpg');//2
@@ -51,24 +86,8 @@ new Product('unicorn', 'img/unicorn.jpg');//16
 new Product('water-can', 'img/water-can.jpg');//17
 new Product('wine-glass', 'img/wine-glass.jpg');//18
 
-function updateStorage() {
-  let stringArr = JSON.stringify(Product.all);
-  localStorage.setItem('Product', stringArr);
 
-}
 
-function getProductVotes() {
-  let data = localStorage.getItem('Product');
-  let parsedArr = JSON.parse(data);
-  if (parsedArr !== null) {
-    // reinstantiation
-    for (let i = 0; i < parsedArr.length; i++) {
-      // name, src,votes,shown
-      new Product(parsedArr[i].name, parsedArr[i].source,parsedArr[i].vote,parsedArr[i].shown);
-    }
-  }
-  renderThreeImages();
-}
 
 
 // from w3 schools
@@ -147,7 +166,7 @@ function handleUserClick(event) {
 
     }
     imagesDiv.removeEventListener('click', handleUserClick);
-    updateStorage();  
+    updateStorage();
     showChart();
   }
   userAttemptsCounter++;
@@ -227,5 +246,5 @@ function showChart() {
 
 }
 
-getProductVotes();
+getItems();
 
